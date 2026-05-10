@@ -1,0 +1,62 @@
+services:
+  backend:
+    build: ./backend
+    container_name: devtoolbox-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER:-toolbox}:${DB_PASSWORD:-devpass}@mysql:3306/${DB_NAME:-dev_toolbox}
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:-dev-secret-change-me}
+      - JWT_ALGORITHM=HS256
+      - JWT_EXPIRE_MINUTES=1440
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    volumes:
+      - ./backend/app:/app/app
+
+  frontend:
+    image: nginx:alpine
+    container_name: devtoolbox-web
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: devtoolbox-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-devrootpass}
+      MYSQL_DATABASE: ${DB_NAME:-dev_toolbox}
+      MYSQL_USER: ${DB_USER:-toolbox}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-devpass}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: mysqladmin ping -h localhost -u ${DB_USER:-toolbox} -p${DB_PASSWORD:-devpass}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: devtoolbox-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
