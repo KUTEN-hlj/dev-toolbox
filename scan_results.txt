@@ -1,0 +1,55 @@
+
+============================================================
+  扫描报告
+============================================================
+
+────────────────────────────────────────
+  [i] [INFO] 端口扫描
+  扫描了 7 个端口，发现 6 个开放
+    端口 80 开放 (HTTP)
+  端口 3306 开放 (MySQL)
+  端口 3307 开放 (MySQL-Alt)
+  端口 6379 开放 (Redis)
+  端口 8000 开放 (HTTP-Alt)
+  端口 8080 开放 (HTTP-Proxy)
+
+────────────────────────────────────────
+  [i] [INFO] SQL注入检测
+  测试了 3 个端点 x 5 种payload，未发现SQL注入漏洞
+  Safe — 所有端点都正确地处理了恶意输入
+
+────────────────────────────────────────
+  [i] [INFO] XSS检测
+  测试了 2 个端点 x 4 种payload，未发现反射型XSS
+  Safe — payload 未被原样反射，或被正确转义
+
+────────────────────────────────────────
+  [!!] [MEDIUM] 目录爆破
+  扫描了 16 个常见敏感路径，发现 15 个
+    [FILE] http://localhost/.env -> HTTP 200
+  [FILE] http://localhost/.git/HEAD -> HTTP 200
+  [FILE] http://localhost/.git/config -> HTTP 200
+  [FILE] http://localhost/robots.txt -> HTTP 200
+  [FILE] http://localhost/admin/ -> HTTP 200
+  [FILE] http://localhost/docs -> HTTP 200
+  [FILE] http://localhost/openapi.json -> HTTP 200
+  [FILE] http://localhost/backup/ -> HTTP 200
+  [FILE] http://localhost/backup.zip -> HTTP 200
+  [FILE] http://localhost/phpinfo.php -> HTTP 200
+  [FILE] http://localhost/phpmyadmin/ -> HTTP 200
+  [FILE] http://localhost/.DS_Store -> HTTP 200
+  [FILE] http://localhost/test/ -> HTTP 200
+  [FILE] http://localhost/debug/ -> HTTP 200
+  [FILE] http://localhost/swagger/ -> HTTP 200
+
+────────────────────────────────────────
+  [OK] [LOW] 认证安全
+  认证机制安全检查:
+    [!!] 可能接受弱密码
+  [OK] 无限流保护
+  [!!] 未登录也能调用工具API
+  [!!] /api/health 暴露: {"status":"ok"}
+
+============================================================
+  扫描完成。共检查 5 个安全维度。
+============================================================
